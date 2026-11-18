@@ -1,0 +1,351 @@
+<title>Screen Time and the Brain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow reading column; each idea is a "chapter" with a live toy beside or below the text */
+:root{
+  --bg:#eef1f6; --panel:#ffffff; --ink:#141a2b; --muted:#5a6378; --line:#d5dbe6;
+  --glow:#2f5bff;   /* screen light */
+  --warm:#d9771c;   /* offline / real world */
+  --good:#1f8a5b; --bad:#c9384a;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1020; --panel:#151b30; --ink:#e8ecf7; --muted:#9aa4bd; --line:#2a3350;
+  --glow:#6f8cff; --warm:#f0a050; --good:#46c08a; --bad:#ff6b7d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1020; --panel:#151b30; --ink:#e8ecf7; --muted:#9aa4bd; --line:#2a3350;
+  --glow:#6f8cff; --warm:#f0a050; --good:#46c08a; --bad:#ff6b7d; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;padding-block:40px 80px;display:flex;flex-direction:column;gap:72px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(44px,9vw,84px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.01em}
+h3{font-size:20px;font-weight:700}
+p{margin:0;max-width:65ch}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.chapter{display:flex;flex-direction:column;gap:18px}
+.lede{font-size:20px;color:var(--muted)}
+.hl-g{color:var(--glow)} .hl-w{color:var(--warm)}
+blockquote{margin:0;padding:4px 0 4px 18px;border-left:3px solid var(--warm);font-family:var(--display);font-size:22px;font-weight:500;line-height:1.3;max-width:60ch}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-size:12px;font-style:normal;color:var(--muted);letter-spacing:.06em}
+.toy{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.toy-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:600 15px var(--body);border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--glow);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
+input[type=range]{width:100%;accent-color:var(--glow)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:3px}
+.seg button{background:transparent;color:var(--muted);border:0;padding:7px 14px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+canvas{width:100%;display:block;border-radius:10px;background:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{border-top:1px solid var(--line);padding-top:8px}
+.stat b{display:block;font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+/* hero */
+.hero{display:flex;flex-direction:column;gap:22px}
+.thesis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.thesis div{padding:16px;border-radius:12px;border:1px dashed var(--line)}
+.thesis div:last-child{border:2px solid var(--glow)}
+.thesis small{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.thesis p{font-family:var(--display);font-size:22px;font-weight:700;line-height:1.2;margin-top:6px}
+.thesis div:first-child p{text-decoration:line-through;text-decoration-color:var(--bad);color:var(--muted)}
+
+/* slot machine */
+.slot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.reel{aspect-ratio:1/1;max-width:100%;border-radius:10px;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-size:clamp(28px,7vw,44px);font-weight:800}
+.reel.spin{animation:jig .12s linear infinite}
+@keyframes jig{50%{transform:translateY(-4px)}}
+.meters{display:grid;gap:12px}
+.meter label{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.bar{height:14px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;transition:width .5s ease}
+#gas i{background:var(--bad)} #brake i{background:var(--good)}
+#verdict{font-weight:600;min-height:1.6em}
+
+/* sleep chart */
+svg text{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.axis{stroke:var(--line)}
+#melaLine{fill:none;stroke:var(--glow);stroke-width:3}
+#melaBase{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 4}
+#melaArea{fill:var(--glow);opacity:.12}
+.chart-box{overflow-x:auto}
+
+/* boredom */
+#mind{min-height:150px;border-radius:10px;background:var(--bg);border:1px solid var(--line);position:relative;overflow:hidden}
+.idea{position:absolute;font-family:var(--display);font-weight:700;font-size:15px;padding:6px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--warm);color:var(--ink);white-space:nowrap;animation:pop .5s ease both}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+#timer{font-family:var(--display);font-size:40px;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* takeaways */
+.plate{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.plate div{padding:16px;border-top:3px solid var(--warm);background:var(--panel);border-radius:0 0 12px 12px}
+.plate div:nth-child(even){border-top-color:var(--glow)}
+.plate p{font-size:15px;color:var(--muted);margin-top:6px}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+footer a{color:var(--glow)}
+
+@media (max-width:560px){
+  .thesis,.plate{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr 1fr}
+  .stat b{font-size:22px}
+  body{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">Harvard Medical School · On The Brain · Summer 2019</span>
+  <h1>Your brain on <span class="hl-g">screens</span></h1>
+  <p class="lede">Pediatrician Michael Rich of Boston Children's Hospital studies how kids use digital media. His big idea: the clock is the wrong thing to watch.</p>
+  <div class="thesis">
+    <div><small>The usual question</small><p>How many hours on screens?</p></div>
+    <div><small>Rich's question</small><p>What are you doing on it, and what is your brain doing back?</p></div>
+  </div>
+  <p>Screens can help kids learn and find community. They can also crowd out sleep and creativity. Here are the four ideas in the article, each with something to play with.</p>
+</header>
+
+<!-- 1. Pruning -->
+<section class="chapter" aria-labelledby="c1">
+  <span class="eyebrow">Idea 1 · The brain is under construction</span>
+  <h2 id="c1">Use it or lose it</h2>
+  <p>A growing brain keeps building new connections between neurons and <b>prunes</b> the ones that don't get used. Whatever a child spends time doing shapes which wires survive, and digital media is part of that.</p>
+  <p>Rich calls much of screen stimulation <b>“impoverished”</b> next to real life: flat, mostly visual, and repetitive. The real world hits every sense at once.</p>
+  <div class="toy">
+    <div class="toy-head">
+      <h3>Grow a brain</h3>
+      <div class="seg" role="group" aria-label="Kind of experience">
+        <button id="modeScreen" aria-pressed="true">Screen-only day</button>
+        <button id="modeMix" aria-pressed="false">Mixed day</button>
+      </div>
+    </div>
+    <canvas id="net" height="300" aria-label="Network of neurons; used connections thicken, unused ones get pruned"></canvas>
+    <div class="row"><button id="grow">Live a year</button><button class="ghost" id="resetNet">Reset</button></div>
+    <div class="stats">
+      <div class="stat"><b id="sKept">0</b><span>connections strengthened</span></div>
+      <div class="stat"><b id="sPruned">0</b><span>pruned away</span></div>
+      <div class="stat"><b id="sAreas">0 / 6</b><span>brain areas exercised</span></div>
+    </div>
+    <p class="note">A toy model, not a brain scan. Each colour is a kind of input (seeing, hearing, touch, movement, people, problem-solving). A screen-only day uses a few of them over and over.</p>
+  </div>
+</section>
+
+<!-- 2. Reward -->
+<section class="chapter" aria-labelledby="c2">
+  <span class="eyebrow">Idea 2 · Why it's hard to put down</span>
+  <h2 id="c2">Your feed is a slot machine</h2>
+  <blockquote>“Virtually all games and social media work on what's called a variable reward system.”<cite>MICHAEL RICH</cite></blockquote>
+  <p>You never know if the next refresh brings a pile of likes or nothing. That uncertainty is exactly how slot machines hook people, and it switches on the brain's <b class="hl-w">reward system</b>. In kids and teens, the <b>self-control system</b> that should hit the brakes is still being built.</p>
+  <div class="toy">
+    <div class="toy-head"><h3>Pull to refresh</h3>
+      <div class="seg" role="group" aria-label="Age">
+        <button data-age="35" aria-pressed="false">Child</button>
+        <button data-age="55" aria-pressed="true">Teen</button>
+        <button data-age="85" aria-pressed="false">Adult</button>
+      </div>
+    </div>
+    <div class="slot" aria-live="polite"><div class="reel" id="r0">♡</div><div class="reel" id="r1">♡</div><div class="reel" id="r2">♡</div></div>
+    <div class="row"><button id="pull">Refresh feed</button><span class="note" id="pulls">0 refreshes</span></div>
+    <div class="meters">
+      <div class="meter" id="gas"><label><span>Reward pull (the gas)</span><span id="gasV">10</span></label><div class="bar"><i style="width:10%"></i></div></div>
+      <div class="meter" id="brake"><label><span>Self-control (the brakes)</span><span id="brakeV">55</span></label><div class="bar"><i style="width:55%"></i></div></div>
+    </div>
+    <p id="verdict">Brakes are winning. Easy to stop now.</p>
+    <p class="note">Wins are random on purpose. Watch how a surprise win pushes the gas harder than a steady one would.</p>
+  </div>
+</section>
+
+<!-- 3. Sleep -->
+<section class="chapter" aria-labelledby="c3">
+  <span class="eyebrow">Idea 3 · The bedtime glow</span>
+  <h2 id="c3">Blue light steals sleep</h2>
+  <p>HMS researchers found that using blue-light screens like phones before bed can <b>suppress melatonin</b>, the hormone that tells your body it's night. Less melatonin means later, worse sleep. Sleep is when the brain stores what it learned that day.</p>
+  <blockquote>“So even if they stay awake in algebra class, they may not remember what happened in class yesterday.”<cite>MICHAEL RICH</cite></blockquote>
+  <div class="toy">
+    <div class="toy-head"><h3>Scroll before bed</h3><span class="tag" id="minsLbl">0 min of screen</span></div>
+    <label for="mins" class="note">Minutes on a phone before lights-out at 10 pm</label>
+    <input type="range" id="mins" min="0" max="120" step="10" value="0">
+    <div class="chart-box"><svg id="sleepSvg" viewBox="0 0 600 220" width="100%" role="img" aria-label="Illustrative melatonin curve over the evening"></svg></div>
+    <div class="stats">
+      <div class="stat"><b id="sMel">100%</b><span>melatonin vs. no screen</span></div>
+      <div class="stat"><b id="sSleep">10:20</b><span>falls asleep around</span></div>
+      <div class="stat"><b id="sMem">Strong</b><span>memory of today</span></div>
+    </div>
+    <p class="note">The shape is illustrative to show the idea. The article reports the direction of the effect, not these exact numbers.</p>
+  </div>
+</section>
+
+<!-- 4. Boredom -->
+<section class="chapter" aria-labelledby="c4">
+  <span class="eyebrow">Idea 4 · The case for doing nothing</span>
+  <h2 id="c4">Boredom is where ideas come from</h2>
+  <blockquote>“Boredom is the space in which creativity and imagination happen.”<cite>MICHAEL RICH</cite></blockquote>
+  <p>A screen fills every empty moment. Rich wants kids to have time to let their minds wander, because that blank time is where the brain starts making its own stuff.</p>
+  <div class="toy">
+    <div class="toy-head"><h3>Be bored for 15 seconds</h3><span id="timer">15</span></div>
+    <div id="mind" aria-live="polite"></div>
+    <div class="row"><button id="bore">Start being bored</button><button class="ghost" id="peek" disabled>Check phone</button></div>
+    <p class="note" id="boreNote">Press start, then don't touch anything. Checking the phone wipes the ideas.</p>
+  </div>
+</section>
+
+<!-- Takeaways -->
+<section class="chapter" aria-labelledby="c5">
+  <span class="eyebrow">So what do you do?</span>
+  <h2 id="c5">Think diet, not ban</h2>
+  <p>Rich argues for balance: a varied mix of online and offline experiences, the way a good diet mixes foods.</p>
+  <div class="plate">
+    <div><h3>Ask “what,” not “how long”</h3><p>Video-calling grandma and doom-scrolling are both screen time. They do very different things to the brain.</p></div>
+    <div><h3>Feed every sense</h3><p>Outdoors, building, sports, face-to-face time. Real life gives the brain richer input than a screen can.</p></div>
+    <div><h3>Guard the night</h3><p>Phones away before bed protects melatonin, sleep, and the memories made that day.</p></div>
+    <div><h3>Leave empty space</h3><p>Let kids be bored sometimes. It is where creativity and imagination get to work.</p></div>
+  </div>
+</section>
+
+<footer>
+  Based on “Screen Time and the Brain” by Debra Bradley Ruder, <i>On The Brain</i>, Harvard Medical School, Summer 2019, featuring Michael Rich, MD, MPH. Read the original:
+  <a href="https://hms.harvard.edu/news-events/publications-archive/brain/screen-time-brain" target="_blank" rel="noopener">hms.harvard.edu</a>. The interactive models are simplified illustrations, not data from the article.
+</footer>
+</div>
+
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 1. Neural pruning toy ---------- */
+(() => {
+  const cv = document.getElementById('net'), ctx = cv.getContext('2d');
+  const kinds = ['#e25555','#2f8fe0','#e0a325','#3bb273','#a35de0','#e0609f']; // 6 input types
+  let nodes = [], edges = [], mode = 'screen', grown = false, anim = null;
+  function size(){ const w = cv.clientWidth; cv.width = w*devicePixelRatio; cv.height = 300*devicePixelRatio; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+  function rnd(seed){ return () => (seed = (seed*16807)%2147483647)/2147483647; }
+  function build(){
+    const r = rnd(7), W = cv.clientWidth, H = 300;
+    nodes = Array.from({length:42},(_,i)=>({x:20+r()*(W-40), y:20+r()*(H-40), k:i%6}));
+    edges = [];
+    nodes.forEach((a,i)=>nodes.forEach((b,j)=>{ if(j>i){ const d=Math.hypot(a.x-b.x,a.y-b.y); if(d<W/5.2) edges.push({a,b,k:r()<.5?a.k:b.k,w:1,alpha:.55,fate:0}); }}));
+    grown = false; stats(); draw();
+  }
+  function draw(){
+    const W = cv.clientWidth; ctx.clearRect(0,0,W,300);
+    edges.forEach(e=>{ if(e.alpha<=0.01) return; ctx.strokeStyle = e.fate===1? kinds[e.k] : css('--muted'); ctx.globalAlpha=e.alpha; ctx.lineWidth=e.w; ctx.beginPath(); ctx.moveTo(e.a.x,e.a.y); ctx.lineTo(e.b.x,e.b.y); ctx.stroke(); });
+    ctx.globalAlpha=1;
+    nodes.forEach(n=>{ ctx.fillStyle=kinds[n.k]; ctx.beginPath(); ctx.arc(n.x,n.y,5,0,7); ctx.fill(); });
+  }
+  function stats(){
+    const kept = edges.filter(e=>e.fate===1).length, pr = edges.filter(e=>e.fate===-1).length;
+    const areas = new Set(edges.filter(e=>e.fate===1).map(e=>e.k)).size;
+    document.getElementById('sKept').textContent = kept;
+    document.getElementById('sPruned').textContent = pr;
+    document.getElementById('sAreas').textContent = areas+' / 6';
+  }
+  function grow(){
+    if(grown) build();
+    const used = mode==='screen' ? [1,0] : [0,1,2,3,4,5]; // screen: seeing+hearing only (visual, audio)
+    const r = rnd(mode==='screen'?3:11);
+    edges.forEach(e=>{ const hit = used.includes(e.k) && r() < (mode==='screen'? .85 : .72); e.fate = hit?1:-1; });
+    grown = true; let t=0; cancelAnimationFrame(anim);
+    const step=()=>{ t+= reduce?1:0.025; const p=Math.min(t,1);
+      edges.forEach(e=>{ if(e.fate===1){ e.w=1+p*3; e.alpha=.55+p*.45; } else { e.alpha=.55*(1-p); } });
+      draw(); if(p<1) anim=requestAnimationFrame(step); else stats(); };
+    step();
+  }
+  const bS=document.getElementById('modeScreen'), bM=document.getElementById('modeMix');
+  [bS,bM].forEach(b=>b.onclick=()=>{ mode = b===bS?'screen':'mix'; bS.setAttribute('aria-pressed',mode==='screen'); bM.setAttribute('aria-pressed',mode==='mix'); build(); });
+  document.getElementById('grow').onclick=grow;
+  document.getElementById('resetNet').onclick=build;
+  addEventListener('resize',()=>{size();build();});
+  size(); build();
+})();
+
+/* ---------- 2. Variable reward slot ---------- */
+(() => {
+  let gas=10, brake=55, pulls=0, busy=false;
+  const reels=[0,1,2].map(i=>document.getElementById('r'+i));
+  const syms=['♡','♡','·','·','♥','★','💬'];
+  function render(){
+    document.querySelector('#gas i').style.width=gas+'%'; document.getElementById('gasV').textContent=Math.round(gas);
+    document.querySelector('#brake i').style.width=brake+'%'; document.getElementById('brakeV').textContent=brake;
+    document.getElementById('pulls').textContent=pulls+(pulls===1?' refresh':' refreshes');
+    const v=document.getElementById('verdict');
+    if(gas<brake-15){v.textContent='Brakes are winning. Easy to stop now.'; v.style.color=css('--good');}
+    else if(gas<brake){v.textContent='Getting close. One more refresh feels tempting.'; v.style.color=css('--warm');}
+    else {v.textContent='The gas has overpowered the brakes. "Just one more…"'; v.style.color=css('--bad');}
+  }
+  document.querySelectorAll('[data-age]').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('[data-age]').forEach(x=>x.setAttribute('aria-pressed',x===b)); brake=+b.dataset.age; render(); });
+  document.getElementById('pull').onclick=()=>{
+    if(busy) return; busy=true; pulls++;
+    reels.forEach(r=>r.classList.add('spin'));
+    const roll=Math.random(); // variable schedule
+    const result = roll<.15 ? ['♥','♥','♥'] : roll<.4 ? ['♥','★','·'] : ['·','·','♡'];
+    reels.forEach((r,i)=>setTimeout(()=>{ r.classList.remove('spin'); r.textContent=result[i];
+      r.style.color = result[i]==='♥'?css('--bad'):result[i]==='★'?css('--warm'):css('--muted');
+      if(i===2){ gas = Math.min(100, gas + (roll<.15? 18 : roll<.4 ? 9 : 4)); render(); busy=false; } }, reduce?0:250+i*220));
+  };
+  setInterval(()=>{ if(gas>10){ gas=Math.max(10,gas-1); render(); } }, 900); // pull fades when you stop
+  render();
+})();
+
+/* ---------- 3. Sleep / melatonin ---------- */
+(() => {
+  const svg=document.getElementById('sleepSvg'), NS='http://www.w3.org/2000/svg';
+  const X0=46,X1=585,Y0=180,Y1=20; // plot box
+  const hours=[19,20,21,22,23,24,25,26]; // 7pm..2am
+  const x=h=>X0+(h-19)/(26-19)*(X1-X0), y=v=>Y0-v*(Y0-Y1);
+  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+  el('line',{x1:X0,y1:Y0,x2:X1,y2:Y0,class:'axis'}); el('line',{x1:X0,y1:Y0,x2:X0,y2:Y1,class:'axis'});
+  hours.forEach(h=>{ const t=el('text',{x:x(h),y:Y0+18,'text-anchor':'middle'}); const hh=h%24; t.textContent=(hh===0?12:hh>12?hh-12:hh)+(hh>=12&&hh<24?'pm':'am'); });
+  const yl=el('text',{x:12,y:Y1+6}); yl.textContent='melatonin';
+  el('line',{x1:x(22),y1:Y0,x2:x(22),y2:Y1,class:'axis','stroke-dasharray':'2 4'});
+  const lo=el('text',{x:x(22)+6,y:Y1+12}); lo.textContent='lights out';
+  const base=el('path',{id:'melaBase'}), area=el('path',{id:'melaArea'}), line=el('path',{id:'melaLine'});
+  const bl=el('text',{x:X1,y:Y1+4,'text-anchor':'end'}); bl.textContent='- - no screen';
+  const curve=(delay,peak)=>{ const pts=[]; for(let h=19;h<=26.001;h+=.1){ const s=1/(1+Math.exp(-(h-(21+delay))*2.2)); pts.push([x(h),y(s*peak*.95)]);} return pts; };
+  const path=p=>'M'+p.map(q=>q.map(n=>n.toFixed(1)).join(',')).join('L');
+  base.setAttribute('d',path(curve(0,1)));
+  const inp=document.getElementById('mins');
+  function upd(){
+    const m=+inp.value, f=m/120;
+    const delay=f*1.5, peak=1-f*.45;
+    const p=curve(delay,peak); line.setAttribute('d',path(p));
+    area.setAttribute('d',path(p)+`L${X1},${Y0}L${X0},${Y0}Z`);
+    document.getElementById('minsLbl').textContent=m+' min of screen';
+    document.getElementById('sMel').textContent=Math.round(peak*100)+'%';
+    const t=22*60+20+Math.round(f*80); document.getElementById('sSleep').textContent=`${Math.floor(t/60)-12}:${String(t%60).padStart(2,'0')}`;
+    const mem=document.getElementById('sMem');
+    mem.textContent = f<.2?'Strong':f<.6?'Patchy':'Foggy';
+    mem.style.color = f<.2?css('--good'):f<.6?css('--warm'):css('--bad');
+  }
+  inp.oninput=upd; upd();
+})();
+
+/* ---------- 4. Boredom ---------- */
+(() => {
+  const ideas=['a comic about the cat','a fort made of chairs','what if clouds were soft?','a new song lyric','a secret handshake','a story about a lost robot','a better paper plane','a game with a ball and a wall','a drawing of the window','a question for tomorrow'];
+  const mind=document.getElementById('mind'), timer=document.getElementById('timer'), peek=document.getElementById('peek'), start=document.getElementById('bore'), note=document.getElementById('boreNote');
+  let iv=null, n=15, idx=0;
+  function stop(){ clearInterval(iv); iv=null; start.disabled=false; peek.disabled=true; }
+  start.onclick=()=>{ mind.innerHTML=''; n=15; idx=0; timer.textContent=n; start.disabled=true; peek.disabled=false; note.textContent='Just wait. Watch what shows up.';
+    iv=setInterval(()=>{ n--; timer.textContent=n;
+      if(n<=12 && n%1===0 && idx<ideas.length){ const s=document.createElement('span'); s.className='idea'; s.textContent=ideas[idx++];
+        s.style.left=(4+Math.random()*55)+'%'; s.style.top=(6+Math.random()*70)+'%'; mind.appendChild(s); }
+      if(n<=0){ stop(); note.textContent=`You came up with ${idx} ideas just by doing nothing. That's Rich's point.`; }
+    },1000); };
+  peek.onclick=()=>{ stop(); mind.innerHTML=''; timer.textContent='📱'; note.textContent='The phone filled the gap and the ideas vanished. Try again without peeking.'; };
+})();
+</script>
